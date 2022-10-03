@@ -1,8 +1,10 @@
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const GitHubStrategy = require("passport-github2").Strategy;
-var LinkedInStrategy = require("passport-linkedin-oauth2").Strategy;
+const LinkedInStrategy = require("passport-linkedin-oauth2").Strategy;
 const passport = require("passport");
 require("dotenv").config();
+
+//github strategy
 passport.use(
   new GitHubStrategy(
     {
@@ -16,6 +18,8 @@ passport.use(
     }
   )
 );
+
+//google strategy
 passport.use(
   new GoogleStrategy(
     {
@@ -25,14 +29,12 @@ passport.use(
       passReqToCallback: true,
     },
     function (request, accessToken, refreshToken, profile, done) {
-      profile.accessToken = accessToken;
-
-      console.log(profile);
-
       return done(null, profile);
     }
   )
 );
+
+//linkedin strategy
 passport.use(
   new LinkedInStrategy(
     {
@@ -42,11 +44,11 @@ passport.use(
       scope: ["r_emailaddress", "r_liteprofile"],
     },
     function (accessToken, refreshToken, profile, done) {
-      console.log(profile);
       return done(null, profile);
     }
   )
 );
+
 passport.serializeUser((user, done) => {
   done(null, user);
 });

@@ -3,14 +3,16 @@ const github_auth_controller = {
   loginWithGithub: passport.authenticate("github", {
     scope: ["profile", "email"],
     session: false,
-    successRedirect: "/",
   }),
 
-  githubCallback: passport.authenticate("github", {
-    successRedirect: process.env.clientBaseUrl,
+  githubMiddleCallback: passport.authenticate("github", {
     failureRedirect: "/login/failed",
     session: false,
   }),
+
+  githubCallback: (req, res) => {
+    res.send(req.user);
+  },
 };
 
 module.exports = github_auth_controller;

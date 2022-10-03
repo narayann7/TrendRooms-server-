@@ -5,11 +5,13 @@ const linkedin_auth_controller = {
     session: false,
   }),
 
-  linkedinCallback: passport.authenticate("linkedin", {
-    successRedirect: process.env.clientBaseUrl,
+  linkedinMiddleCallback: passport.authenticate("linkedin", {
     failureRedirect: "/login/failed",
     session: false,
   }),
+  linkedinCallback: (req, res) => {
+    res.send(req.user);
+  },
 };
 
 module.exports = linkedin_auth_controller;

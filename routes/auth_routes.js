@@ -6,14 +6,26 @@ const linkedin_auth_controller = require("../controllers/linkedin_auth");
 
 // Google OAuth
 router.get("/google", google_auth_controller.loginWithGoogle);
-router.get("/google/callback", google_auth_controller.googleCallback);
+router.get(
+  "/google/callback",
+  google_auth_controller.googleMiddleCallback,
+  google_auth_controller.googleCallback
+);
 
 //Github OAuth
 router.get("/github", github_auth_controller.loginWithGithub);
-router.get("/github/callback", github_auth_controller.githubCallback);
+router.get(
+  "/github/callback",
+  github_auth_controller.githubMiddleCallback,
+  github_auth_controller.githubCallback
+);
 
 //LinkedIn OAuth
 router.get("/linkedin", linkedin_auth_controller.loginWithLinkedin);
-router.get("/linkedin/callback", linkedin_auth_controller.linkedinCallback);
+router.get(
+  "/linkedin/callback",
+  linkedin_auth_controller.linkedinMiddleCallback,
+  linkedin_auth_controller.linkedinCallback
+);
 
 module.exports = router;
