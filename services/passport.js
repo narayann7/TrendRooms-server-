@@ -8,8 +8,8 @@ require("dotenv").config();
 passport.use(
   new GitHubStrategy(
     {
-      clientID: process.env.githubClientID,
-      clientSecret: process.env.githubClientSecret,
+      clientID: process.env.GITHUB_CLIENT_ID,
+      clientSecret: process.env.GITHUB_CLIENT_SECRET,
       callbackURL: "/api/auth/github/callback",
       passReqToCallback: true,
     },
@@ -23,8 +23,8 @@ passport.use(
 passport.use(
   new GoogleStrategy(
     {
-      clientID: process.env.googleClientID,
-      clientSecret: process.env.googleClientSecret,
+      clientID: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
       callbackURL: "/api/auth/google/callback",
       passReqToCallback: true,
     },
@@ -38,8 +38,8 @@ passport.use(
 passport.use(
   new LinkedInStrategy(
     {
-      clientID: process.env.linkedinClientID,
-      clientSecret: process.env.linkedinClientSecret,
+      clientID: process.env.LINKEDIN_CLIENT_ID,
+      clientSecret: process.env.LINKEDIN_CLIENT_SECRET,
       callbackURL: "/api/auth/linkedin/callback",
       scope: ["r_emailaddress", "r_liteprofile"],
     },
