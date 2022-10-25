@@ -1,5 +1,7 @@
+const e = require("express");
 const AppError = require("../models/error_model");
 const User = require("../models/user_schema");
+const JwtService = require("../services/jwt_service");
 
 const createUserController = {
   createUser: async (req, res, next) => {
@@ -8,17 +10,61 @@ const createUserController = {
       if (appUser instanceof AppError) {
         return next(appUser);
       } else {
-      }
-    } catch (error) {}
+        //create user refresh token and access token
+        var tokenData = {
+          email: appUser.email,
+          authId: appUser.authId,
+          authType: appUser.authType,
+        };
+        var refreshToken = JwtService.generateRefreshToken(tokenData);
+        var accessToken = JwtService.generateAccessToken(tokenData);
+        var isLogin = true;
 
-    res.json(appUser);
+        // find user in db and update refresh token
+        var user = await User.findOneAndUpdate(
+          { email: appUser.email },
+          { refreshToken }
+        );
+        if (!user) {
+          //if user not found in db then create new user
+          isLogin = false;
+          var newUser = new User({
+            name: appUser.name,
+            email: appUser.email,
+            authType: appUser.authType,
+            authId: appUser.authId,
+            displayPicture: appUser.displayPicture,
+            refreshToken: refreshToken,
+            bio: "",
+          });
+          var result = await newUser.save();
+          if (!result) {
+            return next(new AppError("User not created", 500));
+          }
+        }
+
+        res.cookie("refreshToken", refreshToken, {
+          maxAge: 1000 * 60 * 10,
+          httpOnly: true,
+          sameSite: "none",
+        });
+
+        var redirectUrl = `${
+          process.env.CLIENT_BASE_URL
+        }/auth?token=${accessToken}&authType=${isLogin ? "login" : "signup"}`;
+
+        res.redirect(redirectUrl);
+      }
+    } catch (error) {
+      return next(new AppError(error.message, 500));
+    }
   },
 };
 function abstactUserDetails(req) {
   try {
     const appUser = {};
     appUser.name = req.user.displayName;
-    appUser.email = req.user.emails[110].value;
+    appUser.email = req.user.emails[0].value;
     appUser.authType = req.user.provider;
     appUser.authId = req.user.id;
     appUser.displayPicture = getUrl(req);
