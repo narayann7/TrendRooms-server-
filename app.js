@@ -4,6 +4,7 @@ const passport = require("passport");
 const mongoose = require("mongoose");
 const cookieParser = require("cookie-parser");
 const authRoute = require("./routes/auth_routes");
+const errorHanddler = require("./middlewares/error_haddler");
 const app = express();
 require("dotenv").config();
 require("./services/passport");
@@ -58,6 +59,7 @@ mongoose.connect(db_url, (err) => {
   if (err) throw err;
   console.log("MongoDB connected");
 });
+app.use(errorHanddler);
 app.listen(port, () => {
   console.log(`Listening.... on port ${port}`);
 });

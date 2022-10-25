@@ -1,24 +1,30 @@
 const AppError = require("../models/error_model");
+const User = require("../models/user_schema");
 
 const createUserController = {
-  createUser: async (req, res) => {
-    var appUser = abstactUserDetails(req);
+  createUser: async (req, res, next) => {
+    try {
+      var appUser = abstactUserDetails(req);
+      if (appUser instanceof AppError) {
+        return next(appUser);
+      } else {
+      }
+    } catch (error) {}
+
     res.json(appUser);
-    // find user in db
-    // User.findOne({ email: appUser.email }, (err, user) => {});
   },
 };
 function abstactUserDetails(req) {
   try {
     const appUser = {};
     appUser.name = req.user.displayName;
-    appUser.email = req.user.emails[0].value;
+    appUser.email = req.user.emails[110].value;
     appUser.authType = req.user.provider;
     appUser.authId = req.user.id;
     appUser.displayPicture = getUrl(req);
     return appUser;
   } catch (error) {
-    var appError = new AppErrorError(error.message, 500);
+    var appError = new AppError(error.message, 500);
     return appError;
   }
 }
