@@ -1,9 +1,8 @@
-const e = require("express");
+const JwtService = require("../services/jwt_service");
 const AppError = require("../models/error_model");
 const User = require("../models/user_schema");
-const JwtService = require("../services/jwt_service");
 
-const createUserController = {
+const userController = {
   createUser: async (req, res, next) => {
     try {
       var appUser = abstactUserDetails(req);
@@ -42,22 +41,35 @@ const createUserController = {
             return next(new AppError("User not created", 500));
           }
         }
-
-        res.cookie("refreshToken", refreshToken, {
+        //send access token in cookie
+        res.cookie("accessToken", accessToken, {
           maxAge: 1000 * 60 * 10,
           httpOnly: true,
           sameSite: "none",
         });
-
+        //send refresh token in url as query param
         var redirectUrl = `${
           process.env.CLIENT_BASE_URL
-        }/auth?token=${accessToken}&authType=${isLogin ? "login" : "signup"}`;
+        }/auth?token=${refreshToken}&authType=${isLogin ? "login" : "signup"}`;
 
         res.redirect(redirectUrl);
       }
     } catch (error) {
       return next(new AppError(error.message, 500));
     }
+  },
+  getUser: async (req, res, next) => {
+    // var refreshToken = req.cookies;
+    res.json(res.user);
+    // try {
+    //   var user = await User.findOne({ email: req.user.email });
+    //   if (!user) {
+    //     return next(new AppError("User not found", 404));
+    //   }
+    //   res.status(200).json(user);
+    // } catch (error) {
+    //   return next(new AppError(error.message, 500));
+    // }
   },
 };
 function abstactUserDetails(req) {
@@ -90,4 +102,4 @@ function getUrl(req) {
     return "";
   }
 }
-module.exports = createUserController;
+module.exports = userController;

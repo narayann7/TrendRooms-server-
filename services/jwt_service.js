@@ -1,11 +1,12 @@
 const jwt = require("jsonwebtoken");
+const AppError = require("./../models/error_model");
 
 class JWTservice {
   //GENERATE ACCESS TOKEN
   static generateAccessToken(user) {
-    //expires in 10 minutes
+    //expires in 10 seconds
     var token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {
-      expiresIn: "10m",
+      expiresIn: "10s",
     });
     return token;
   }

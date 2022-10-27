@@ -1,6 +1,5 @@
 const passport = require("passport");
 const userController = require("../controllers/user_auth");
-
 const github_auth_controller = {
   loginWithGithub: passport.authenticate("github", {
     scope: ["profile", "email"],
@@ -11,6 +10,7 @@ const github_auth_controller = {
     failureRedirect: "/login/failed",
     session: false,
   }),
+
   githubCallback: userController.createUser,
 };
 
