@@ -46,6 +46,7 @@ const userController = {
           maxAge: 1000 * 60 * 10,
           httpOnly: true,
           sameSite: "none",
+          secure: true,
         });
         //send refresh token in url as query param
         var redirectUrl = `${
@@ -59,17 +60,18 @@ const userController = {
     }
   },
   getUser: async (req, res, next) => {
-    // var refreshToken = req.cookies;
-    res.json(res.user);
-    // try {
-    //   var user = await User.findOne({ email: req.user.email });
-    //   if (!user) {
-    //     return next(new AppError("User not found", 404));
-    //   }
-    //   res.status(200).json(user);
-    // } catch (error) {
-    //   return next(new AppError(error.message, 500));
-    // }
+    var { email } = res.user;
+    if (!email) {
+      return next(new AppError("User not found", 404));
+    }
+    var user = await User.findOne({ email: email });
+    if (!user) {
+      return next(new AppError("User not found", 404));
+    }
+    res.status(200).json({
+      status: "success",
+      user,
+    });
   },
 };
 function abstactUserDetails(req) {

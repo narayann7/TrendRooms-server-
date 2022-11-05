@@ -60,15 +60,16 @@ const authHandler = async (req, res, next) => {
                     maxAge: 1000 * 60 * 10,
                     httpOnly: true,
                     sameSite: "none",
+                    secure: true,
                   });
-                  console.log("\nnewAccessToken------------", newAccessToken);
+                  console.log("\nnewAccessToken------------\n", newAccessToken);
                 }
               }
             }
           }
         }
       } else {
-        console.log("\naccessToken-------------", accessToken);
+        console.log("\naccessToken-------------\n", accessToken);
         res.user = result;
       }
     }

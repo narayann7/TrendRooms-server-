@@ -4,7 +4,7 @@ const AppError = require("./../models/error_model");
 class JWTservice {
   //GENERATE ACCESS TOKEN
   static generateAccessToken(user) {
-    //expires in 10 seconds
+    //expires in 10 minutes
     var token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {
       expiresIn: "10s",
     });
