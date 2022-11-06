@@ -8,6 +8,7 @@ const authHandler = async (req, res, next) => {
     if (!accessToken) {
       return next(new AppError("Access token not found", 401));
     } else {
+      //verify access token
       var result = JwtService.verifyToken(accessToken, "access");
 
       //if access token is not valid then check refresh token
@@ -17,6 +18,7 @@ const authHandler = async (req, res, next) => {
           return next(result);
         } else if (result.message === "jwt expired") {
           //if access token is expired then check refresh token in header
+          //  !todo for multiple tokens
           var _refreshToken = req.headers.authorization;
           _refreshToken = _refreshToken.split(" ")[1];
           console.log(_refreshToken);

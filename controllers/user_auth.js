@@ -6,6 +6,9 @@ const userController = {
   createUser: async (req, res, next) => {
     try {
       var appUser = abstactUserDetails(req);
+
+
+      
       if (appUser instanceof AppError) {
         return next(appUser);
       } else {
