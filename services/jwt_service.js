@@ -5,14 +5,14 @@ class JWTservice {
   //GENERATE ACCESS TOKEN
   static generateAccessToken(user) {
     //expires in 10 minutes
-    var token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {
+    var token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET_KEY, {
       expiresIn: "10s",
     });
     return token;
   }
   //GENERATE REFRESH TOKEN
   static generateRefreshToken(user) {
-    var token = jwt.sign(user, process.env.REFRESH_TOKEN_SECRET, {
+    var token = jwt.sign(user, process.env.REFRESH_TOKEN_SECRET_KEY, {
       expiresIn: "1y",
     });
     return token;
@@ -24,8 +24,8 @@ class JWTservice {
     return jwt.verify(
       token,
       type === "access"
-        ? process.env.ACCESS_TOKEN_SECRET
-        : process.env.REFRESH_TOKEN_SECRET,
+        ? process.env.ACCESS_TOKEN_SECRET_KEY
+        : process.env.REFRESH_TOKEN_SECRET_KEY,
       (err, payload) => {
         if (err) {
           return new AppError(err.message, 401);
