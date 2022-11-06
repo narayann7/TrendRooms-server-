@@ -73,6 +73,21 @@ const userController = {
       user,
     });
   },
+
+  updateUser: async (req, res, next) => {
+    var { email } = res.user;
+    if (!email) {
+      return next(new AppError("User not found", 404));
+    }
+    var user = await User.findOneAndUpdate({ email: email }, req.body);
+    if (!user) {
+      return next(new AppError("User not found", 404));
+    }
+    res.status(200).json({
+      status: "success",
+      user,
+    });
+  },
 };
 function abstactUserDetails(req) {
   try {
