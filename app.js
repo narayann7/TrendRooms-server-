@@ -15,7 +15,7 @@ require("./services/passport");
 const port = process.env.PORT || 5000;
 const db_url = process.env.MONGO_URI + "/trendRooms";
 const appCors = cors({
-  origin: [process.env.CLIENT_BASE_URL, "narayann.me", "*"],
+  origin: [process.env.CLIENT_BASE_URL, "*"],
   methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
   credentials: true,
 });
