@@ -6,10 +6,11 @@ class JWTservice {
   static generateAccessToken(user) {
     //expires in 10 minutes
     var token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET_KEY, {
-      expiresIn: "20m",
+      expiresIn: "10s",
     });
     return token;
   }
+
   //GENERATE REFRESH TOKEN
   static generateRefreshToken(user) {
     var token = jwt.sign(user, process.env.REFRESH_TOKEN_SECRET_KEY, {
