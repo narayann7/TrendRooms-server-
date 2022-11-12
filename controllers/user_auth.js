@@ -7,8 +7,6 @@ const userController = {
     try {
       var appUser = abstactUserDetails(req);
 
-
-      
       if (appUser instanceof AppError) {
         return next(appUser);
       } else {
@@ -44,17 +42,13 @@ const userController = {
             return next(new AppError("User not created", 500));
           }
         }
-        //send access token in cookie
-        res.cookie("accessToken", accessToken, {
-          maxAge: 1000 * 60 * 10,
-          httpOnly: true,
-          sameSite: "none",
-          secure: true,
-        });
-        //send refresh token in url as query param
+
+        //send refresh token , access token, authtype and isLogin as redirect url
         var redirectUrl = `${
           process.env.CLIENT_BASE_URL
-        }/auth?token=${refreshToken}&authType=${isLogin ? "login" : "signup"}`;
+        }/auth/?refreshToken=${refreshToken}&accessToken=${accessToken}&authType=${
+          isLogin ? "login" : "signup"
+        }`;
 
         res.redirect(redirectUrl);
       }
@@ -63,18 +57,23 @@ const userController = {
     }
   },
   getUser: async (req, res, next) => {
-    var { email } = res.user;
-    if (!email) {
-      return next(new AppError("User not found", 404));
+    if (res.user) {
+      console.log(res.user);
+      res.send("get user");
     }
-    var user = await User.findOne({ email: email });
-    if (!user) {
-      return next(new AppError("User not found", 404));
-    }
-    res.status(200).json({
-      status: "success",
-      user,
-    });
+
+    // var { email } = res.user;
+    // if (!email) {
+    //   return next(new AppError("User not found", 404));
+    // }
+    // var user = await User.findOne({ email: email });
+    // if (!user) {
+    //   return next(new AppError("User not found", 404));
+    // }
+    // res.status(200).json({
+    //   status: "success",
+    //   user,
+    // });
   },
 
   updateUser: async (req, res, next) => {

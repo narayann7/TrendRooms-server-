@@ -14,6 +14,4 @@ const google_auth_controller = {
   googleCallback: userController.createUser,
 };
 
-function createUser(req, res) {}
-
 module.exports = google_auth_controller;

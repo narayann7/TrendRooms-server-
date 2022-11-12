@@ -4,7 +4,12 @@ const JwtService = require("./../services/jwt_service");
 
 const authHandler = async (req, res, next) => {
   try {
-    var accessToken = req.cookies.accessToken;
+    var accessToken = req.headers.session;
+    var _refreshToken = req.headers.authorization;
+
+    accessToken = accessToken.split(" ")[1];
+    _refreshToken = _refreshToken.split(" ")[1];
+
     if (!accessToken) {
       return next(new AppError("Access token not found", 401));
     } else {
@@ -13,15 +18,8 @@ const authHandler = async (req, res, next) => {
 
       //if access token is not valid then check refresh token
       if (result instanceof AppError) {
-        if (result.message === "invalid signature") {
-          //if invalid signature then send error
-          return next(result);
-        } else if (result.message === "jwt expired") {
+        if (result.message === "jwt expired") {
           //if access token is expired then check refresh token in header
-          //  !todo for multiple tokens
-          var _refreshToken = req.headers.authorization;
-          _refreshToken = _refreshToken.split(" ")[1];
-          console.log(_refreshToken);
 
           if (!_refreshToken) {
             //if refresh token not found in header then send error
@@ -56,19 +54,15 @@ const authHandler = async (req, res, next) => {
                     JwtService.generateAccessToken(tokenData);
 
                   res.user = tokenData;
-                  console.log(res.user);
+                  res.accessToken = newAccessToken;
 
-                  res.cookie("accessToken", newAccessToken, {
-                    maxAge: 1000 * 60 * 10,
-                    httpOnly: true,
-                    sameSite: "none",
-                    secure: true,
-                  });
                   console.log("\nnewAccessToken------------\n", newAccessToken);
                 }
               }
             }
           }
+        } else {
+          return next(new AppError("Invalid access token", 401));
         }
       } else {
         console.log("\naccessToken-------------\n", accessToken);

@@ -11,7 +11,11 @@ const github_auth_controller = {
     session: false,
   }),
 
-  githubCallback: userController.createUser,
+  githubCallback: (req, res, next) => {
+    console.log("github callback");
+    res.json(req.user);
+  },
+  // githubCallback: userController.createUser,
 };
 
 module.exports = github_auth_controller;
