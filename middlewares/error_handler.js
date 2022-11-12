@@ -10,9 +10,10 @@ const errorHanddler = (err, req, res, next) => {
   if (err instanceof AppError) {
     data = {
       statusCode: err.statusCode,
-      message: "error from middlewareError customErrorClass",
+      message: err.errorFrom,
       originalError: err.message,
     };
+    console.log(err.toString());
   }
   return res.status(data.statusCode).json(data);
 };

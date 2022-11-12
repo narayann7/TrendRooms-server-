@@ -6,7 +6,7 @@ class JWTservice {
   static generateAccessToken(user) {
     //expires in 10 minutes
     var token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET_KEY, {
-      expiresIn: "10y",
+      expiresIn: "20m",
     });
     return token;
   }
@@ -28,7 +28,12 @@ class JWTservice {
         : process.env.REFRESH_TOKEN_SECRET_KEY,
       (err, payload) => {
         if (err) {
-          return new AppError(err.message, 401);
+          var error = new AppError(err.message, {
+            errorFrom: "JWTservice.verifyToken",
+            statusCode: 401,
+          });
+
+          return error;
         } else {
           return payload;
         }

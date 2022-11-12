@@ -1,6 +1,7 @@
 const JwtService = require("../services/jwt_service");
 const AppError = require("../models/error_model");
 const User = require("../models/user_schema");
+const { sendRespond } = require("../services/common_services");
 
 const userController = {
   createUser: async (req, res, next) => {
@@ -39,7 +40,12 @@ const userController = {
           });
           var result = await newUser.save();
           if (!result) {
-            return next(new AppError("User not created", 500));
+            return next(
+              new AppError("User not created", {
+                statusCode: 500,
+                errorFrom: "userController.createUser",
+              })
+            );
           }
         }
 
@@ -53,42 +59,60 @@ const userController = {
         res.redirect(redirectUrl);
       }
     } catch (error) {
-      return next(new AppError(error.message, 500));
+      return next(
+        new AppError(error.message, {
+          statusCode: 500,
+          errorFrom: "userController.createUser",
+        })
+      );
     }
   },
   getUser: async (req, res, next) => {
     if (res.user) {
-      console.log(res.user);
-      res.send("get user");
+      var { email } = res.user;
+      if (!email) {
+        return next(
+          new AppError("User not found", {
+            statusCode: 404,
+            errorFrom: "userController.getUser",
+          })
+        );
+      }
+      var user = await User.findOne({ email: email });
+      if (!user) {
+        return next(
+          new AppError("User not found", {
+            statusCode: 404,
+            errorFrom: "userController.getUser",
+          })
+        );
+      } else {
+        sendRespond(res, user);
+      }
     }
-
-    // var { email } = res.user;
-    // if (!email) {
-    //   return next(new AppError("User not found", 404));
-    // }
-    // var user = await User.findOne({ email: email });
-    // if (!user) {
-    //   return next(new AppError("User not found", 404));
-    // }
-    // res.status(200).json({
-    //   status: "success",
-    //   user,
-    // });
   },
 
   updateUser: async (req, res, next) => {
     var { email } = res.user;
     if (!email) {
-      return next(new AppError("User not found", 404));
+      return next(
+        new AppError("User not found", {
+          statusCode: 404,
+          errorFrom: "userController.updateUser",
+        })
+      );
     }
     var user = await User.findOneAndUpdate({ email: email }, req.body);
     if (!user) {
-      return next(new AppError("User not found", 404));
+      return next(
+        new AppError("User not found", {
+          statusCode: 404,
+          errorFrom: "userController.updateUser",
+        })
+      );
+    } else {
+      sendRespond(res, user);
     }
-    res.status(200).json({
-      status: "success",
-      user,
-    });
   },
 };
 function abstactUserDetails(req) {
@@ -101,7 +125,10 @@ function abstactUserDetails(req) {
     appUser.displayPicture = getUrl(req);
     return appUser;
   } catch (error) {
-    var appError = new AppError(error.message, 500);
+    var appError = new AppError(error.message, {
+      statusCode: 500,
+      errorFrom: "userController.abstactUserDetails",
+    });
     return appError;
   }
 }
